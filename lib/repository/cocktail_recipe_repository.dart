@@ -26,3 +26,4 @@ Future<List<CocktailModel>> searchCocktails(String query) async {
     throw Exception('Произошла ошибка: $e');
   }
 }
+

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Поиск коктейлей',
       theme: ThemeData(
-        primarySwatch:  Colors.yellow,
+        primarySwatch: Colors.yellow,
       ),
       home: const CocktailSearchScreen(),
     );
