@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../models/cocktail_model.dart';
 import '../repository/cocktail_details_repository.dart';
 import '../repository/cocktail_recipe_repository.dart';
@@ -99,7 +100,13 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(
+                  child: Lottie.asset(
+                    'assets/animation.json',
+                    width: 500,
+                    height: 500,
+                      ),
+                    )
                     : GridView.builder(
                       padding: EdgeInsets.all(8.0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
