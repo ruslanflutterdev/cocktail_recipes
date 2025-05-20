@@ -16,6 +16,7 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<CocktailModel> _searchResults = [];
   bool _isLoading = false;
+  final List<String> _favoriteCocktails = [];
 
   Future<void> _fetchCocktails(String query) async {
     setState(() {
@@ -68,6 +69,16 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
     }
   }
 
+  void _toggleFavorite(String cocktailId) {
+    setState(() {
+      if (_favoriteCocktails.contains(cocktailId)) {
+        _favoriteCocktails.remove(cocktailId);
+      } else {
+        _favoriteCocktails.add(cocktailId);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,10 +112,10 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
             child:
                 _isLoading
                     ? Center(
-                  child: Lottie.asset(
-                    'assets/animation.json',
-                    width: 500,
-                    height: 500,
+                      child: Lottie.asset(
+                        'assets/animation.json',
+                        width: 500,
+                        height: 500,
                       ),
                     )
                     : GridView.builder(
@@ -118,52 +129,80 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
                       itemCount: _searchResults.length,
                       itemBuilder: (context, index) {
                         final cocktail = _searchResults[index];
-                        return InkWell(
-                          onTap: () {
-                            if (cocktail.idDrink != null) {
-                              _navigateToCocktailDetails(cocktail.idDrink!);
-                            }
-                          },
-                          child: Card(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child:
-                                      cocktail.strDrinkThumb != null
-                                          ? Image.network(
-                                            cocktail.strDrinkThumb!,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (
-                                              context,
-                                              error,
-                                              stackTrace,
-                                            ) {
-                                              return Center(
-                                                child: Text(
-                                                  'Ошибка загрузки изображения',
-                                                ),
-                                              );
-                                            },
-                                          )
-                                          : Center(
-                                            child: Text('Нет изображения'),
-                                          ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    cocktail.strDrink ?? 'Нет названия',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                        final isFavorite = _favoriteCocktails.contains(
+                          cocktail.idDrink,
+                        );
+                        return Card(
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  if (cocktail.idDrink != null) {
+                                    _navigateToCocktailDetails(
+                                      cocktail.idDrink!,
+                                    );
+                                  }
+                                },
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child:
+                                          cocktail.strDrinkThumb != null
+                                              ? Image.network(
+                                                cocktail.strDrinkThumb!,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return Center(
+                                                    child: Text(
+                                                      'Ошибка загрузки изображения',
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                              : Center(
+                                                child: Text('Нет изображения'),
+                                              ),
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        cocktail.strDrink ?? 'Нет названия',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: Icon(
+                                    isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color:
+                                        isFavorite ? Colors.red : Colors.grey,
+                                  ),
+                                  onPressed: () {
+                                    if (cocktail.idDrink != null) {
+                                      _toggleFavorite(cocktail.idDrink!);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
