@@ -1,3 +1,4 @@
+import 'package:cocktail_recipes/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../models/cocktail_model.dart';
@@ -79,10 +80,36 @@ class _CocktailSearchScreenState extends State<CocktailSearchScreen> {
     });
   }
 
+  Future<void> _navigateToFavorites() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => FavoritesScreen(
+              favoriteIds: List.from(_favoriteCocktails),
+              onFavoritesChanged: (updatedList) {
+                setState(() {
+                  _favoriteCocktails.clear();
+                  _favoriteCocktails.addAll(updatedList);
+                });
+              },
+            ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Поиск коктейлей')),
+      appBar: AppBar(
+        title: Text('Поиск коктейлей'),
+        actions: [
+          IconButton(
+            onPressed: _navigateToFavorites,
+            icon: Icon(Icons.favorite),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
